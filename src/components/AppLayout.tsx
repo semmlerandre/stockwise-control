@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Package,
   Users,
+  UserPlus,
   LogOut,
   Menu,
   X,
@@ -17,6 +18,7 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
   { label: 'Inventário', icon: Package, path: '/inventory' },
   { label: 'Colaboradores', icon: Users, path: '/collaborators' },
+  { label: 'Usuários', icon: UserPlus, path: '/users' },
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
