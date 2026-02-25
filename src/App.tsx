@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Collaborators from "./pages/Collaborators";
+import Users from "./pages/Users";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const AppRoutes = () => (
     <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
     <Route path="/collaborators" element={<ProtectedRoute><Collaborators /></ProtectedRoute>} />
+    <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
