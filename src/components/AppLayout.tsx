@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useSettings } from '@/hooks/useSettings';
 import {
   LayoutDashboard,
   Package,
@@ -10,8 +11,8 @@ import {
   Menu,
   X,
   ChevronRight,
+  Settings,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -19,10 +20,12 @@ const navItems = [
   { label: 'Inventário', icon: Package, path: '/inventory' },
   { label: 'Colaboradores', icon: Users, path: '/collaborators' },
   { label: 'Usuários', icon: UserPlus, path: '/users' },
+  { label: 'Configurações', icon: Settings, path: '/settings' },
 ];
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const { signOut, user } = useAuth();
+  const { settings } = useSettings();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -30,12 +33,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 bg-foreground/20 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-sidebar-foreground flex flex-col transition-transform duration-200 lg:translate-x-0 lg:static',
@@ -43,10 +44,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
         )}
       >
         <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
-          <div className="w-9 h-9 rounded-lg bg-sidebar-primary flex items-center justify-center">
-            <Package className="w-5 h-5 text-sidebar-primary-foreground" />
-          </div>
-          <span className="text-lg font-bold">InventoryPro</span>
+          {settings.logo_url ? (
+            <img src={settings.logo_url} alt="Logo" className="h-9 w-auto object-contain" />
+          ) : (
+            <div className="w-9 h-9 rounded-lg bg-sidebar-primary flex items-center justify-center">
+              <Package className="w-5 h-5 text-sidebar-primary-foreground" />
+            </div>
+          )}
+          <span className="text-lg font-bold truncate">{settings.system_name}</span>
           <button className="ml-auto lg:hidden" onClick={() => setSidebarOpen(false)}>
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +93,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-30 bg-card border-b px-4 py-3 flex items-center gap-3">
           <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>

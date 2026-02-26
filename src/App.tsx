@@ -4,12 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { SettingsProvider } from "@/hooks/useSettings";
 import { AppLayout } from "@/components/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Collaborators from "./pages/Collaborators";
 import Users from "./pages/Users";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,7 @@ const AppRoutes = () => (
     <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
     <Route path="/collaborators" element={<ProtectedRoute><Collaborators /></ProtectedRoute>} />
     <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
@@ -46,7 +49,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <SettingsProvider>
+            <AppRoutes />
+          </SettingsProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
