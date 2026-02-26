@@ -11,23 +11,30 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    // Check if any users exist
-    const { data: profiles } = await supabaseAdmin
-      .from('profiles')
-      .select('id')
-      .limit(1);
-
-    if (profiles && profiles.length > 0) {
+    if (!supabaseUrl || !serviceRoleKey) {
       return new Response(
-        JSON.stringify({ created: false, message: 'Admin already exists' }),
+        JSON.stringify({ error: 'Missing env vars' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+
+    // List auth users to check if any exist
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1 });
+
+    if (usersData && usersData.users && usersData.users.length > 0) {
+      return new Response(
+        JSON.stringify({ created: false, message: 'Users already exist' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Clean up any orphan profiles
+    await supabaseAdmin.from('profiles').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
     // Create admin user
     const { error } = await supabaseAdmin.auth.admin.createUser({
